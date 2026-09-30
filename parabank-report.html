@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ParaBank JMeter Performance Test Report</title>
+<style>
+:root{--bg:#f6f8f7;--ink:#14231f;--muted:#5b6b66;--line:#d5ddda;--card:#fff;--accent:#0f6b5c;--warn:#b4541a;--warnbg:#fbeee3}
+@media (prefers-color-scheme:dark){:root{--bg:#101816;--ink:#e6efec;--muted:#93a49f;--line:#2a3a36;--card:#17211f;--accent:#4fc3ad;--warn:#f0a066;--warnbg:#2b1f16}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Source Sans 3",Segoe UI,Helvetica,Arial,sans-serif}
+main{max-width:860px;margin:0 auto;padding:48px 20px 72px}
+h1{font:700 2.2rem/1.2 Georgia,"Times New Roman",serif;margin:0 0 8px}
+h2{font:700 1.35rem Georgia,serif;margin:44px 0 12px}
+p{max-width:68ch;margin:0 0 12px}
+.sub{color:var(--muted)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:0;border:1px solid var(--line);background:var(--card);margin:28px 0}
+.facts div{padding:16px;border-right:1px solid var(--line)}
+.facts div:last-child{border-right:0}
+.facts b{display:block;font-size:1.5rem;color:var(--accent)}
+.facts span{color:var(--muted);font-size:.9rem}
+.scroll{overflow-x:auto;border:1px solid var(--line);background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:.95rem}
+th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th{background:var(--bg);font-weight:600}
+tr.fail td{background:var(--warnbg);color:var(--warn);font-weight:600}
+.bars{background:var(--card);border:1px solid var(--line);padding:16px}
+.row{display:grid;grid-template-columns:90px 1fr 70px;align-items:center;gap:10px;margin:6px 0;font-size:.9rem}
+.bar{height:14px;background:var(--accent);min-width:2px}
+.row.fail .bar{background:var(--warn)}
+.note{border-left:4px solid var(--warn);background:var(--warnbg);padding:12px 16px;margin:16px 0}
+ul{padding-left:20px;max-width:68ch}
+li{margin:6px 0}
+footer{margin-top:48px;color:var(--muted);font-size:.9rem}
+</style>
+</head>
+<body>
+<main>
+<h1>ParaBank Performance Test Report</h1>
+<p class="sub">Apache JMeter test of the ParaBank public demo: Register, Login, Open New Account, Transfer Funds, Accounts Overview, Logout.</p>
+
+<div class="facts">
+<div><b>1 to 10</b><span>virtual users tested</span></div>
+<div><b>0.00%</b><span>errors in every completed run</span></div>
+<div><b>333 to 627 ms</b><span>average response time range</span></div>
+<div><b>1 x 429</b><span>not reproduced on rerun</span></div>
+</div>
+
+<h2>Results by run</h2>
+<div class="scroll">
+<table>
+<thead><tr><th>Run</th><th>Ramp-up</th><th>Samples</th><th>Avg (ms)</th><th>Max (ms)</th><th>Error %</th></tr></thead>
+<tbody>
+<tr><td>1 user</td><td>5 s</td><td>7</td><td>333</td><td>591</td><td>0.00%</td></tr>
+<tr><td>2 users</td><td>10 s</td><td>14</td><td>601</td><td>-</td><td>0.00%</td></tr>
+<tr><td>3 users</td><td>15 s</td><td>21</td><td>469</td><td>-</td><td>0.00%</td></tr>
+<tr><td>4 users</td><td>20 s</td><td>28</td><td>467</td><td>-</td><td>0.00%</td></tr>
+<tr><td>5 users</td><td>25 s</td><td>35</td><td>501</td><td>-</td><td>0.00%</td></tr>
+<tr><td>6 users</td><td>30 s</td><td>42</td><td>460</td><td>-</td><td>0.00%</td></tr>
+<tr><td>7 users</td><td>35 s</td><td>49</td><td>480</td><td>-</td><td>0.00%</td></tr>
+<tr><td>8 users</td><td>40 s</td><td>56</td><td>467</td><td>-</td><td>0.00%</td></tr>
+<tr><td>9 users</td><td>45 s</td><td>63</td><td>456</td><td>1088</td><td>0.00%</td></tr>
+<tr><td>10 users</td><td>50 s</td><td>70</td><td>627</td><td>1920</td><td>0.00%</td></tr>
+<tr class="fail"><td>10 users, first attempt</td><td>25 s</td><td>-</td><td>-</td><td>-</td><td>HTTP 429</td></tr>
+<tr><td>10 users, rerun</td><td>25 s</td><td>70</td><td>458</td><td>1183</td><td>0.00%</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>Average response time</h2>
+<div class="bars" id="bars"></div>
+
+<h2>The HTTP 429</h2>
+<p>The first 10-user run with a 25 s ramp-up returned 429 Too Many Requests. The identical configuration, rerun, finished with 0% errors and a 458 ms average.</p>
+<div class="note">The 429 did not reproduce, so no rate-limit threshold is claimed. Possible causes, all unconfirmed: cumulative requests from my IP during earlier debugging, other traffic on the shared server, or time-window rate limiting.</div>
+
+<h2>Limitations</h2>
+<ul>
+<li>Shared public server, so results include network and server variability.</li>
+<li>One run per configuration, 7 samples per user.</li>
+<li>Indicative numbers, not a capacity benchmark.</li>
+<li>Balance conservation under concurrent load was not verified.</li>
+</ul>
+
+<h2>Next steps</h2>
+<ul>
+<li>Self-host ParaBank and test 25, 50 and 100 users.</li>
+<li>Add the balance-conservation check across transfers.</li>
+<li>Capture Retry-After and X-RateLimit headers if a 429 recurs.</li>
+</ul>
+
+<footer>Only run load tests against systems you own or have permission to test.</footer>
+</main>
+<script>
+var d=[["1 user",333],["2 users",601],["3 users",469],["4 users",467],["5 users",501],["6 users",460],["7 users",480],["8 users",467],["9 users",456],["10 (50 s)",627],["10 (429)",0],["10 rerun",458]];
+var el=document.getElementById("bars");
+d.forEach(function(r){
+var f=r[1]===0;
+var row=document.createElement("div");row.className="row"+(f?" fail":"");
+row.innerHTML='<span>'+r[0]+'</span><div><div class="bar" style="width:'+(f?1:r[1]/650*100)+'%"></div></div><span>'+(f?'429':r[1]+' ms')+'</span>';
+el.appendChild(row);});
+</script>
+</body>
+</html>
